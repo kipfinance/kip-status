@@ -1,0 +1,39 @@
+{
+  "checked_at": null,
+  "generated_by": "kip-status synthetic checks",
+  "components": {
+    "login_authentication": {
+      "status": "down",
+      "checked_at": null,
+      "expires_at": null,
+      "duration_ms": null,
+      "summary": "Synthetic status checks have not run yet.",
+      "details": {}
+    },
+    "vault_document_upload": {
+      "status": "down",
+      "checked_at": null,
+      "expires_at": null,
+      "duration_ms": null,
+      "summary": "Synthetic status checks have not run yet.",
+      "details": {}
+    },
+    "document_processing": {
+      "status": "down",
+      "checked_at": null,
+      "expires_at": null,
+      "duration_ms": null,
+      "summary": "Synthetic status checks have not run yet.",
+      "details": {}
+    },
+    "tax_engine_artifacts": {
+      "status": "down",
+      "checked_at": null,
+      "expires_at": null,
+      "duration_ms": null,
+      "summary": "Synthetic status checks have not run yet.",
+      "details": {}
+    }
+  },
+  "ok_markers": []
+}
