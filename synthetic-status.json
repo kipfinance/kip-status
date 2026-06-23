@@ -1,22 +1,29 @@
 {
-  "checked_at": null,
+  "checked_at": "2026-06-23T01:55:31.385Z",
   "generated_by": "kip-status synthetic checks",
   "components": {
     "login_authentication": {
-      "status": "down",
-      "checked_at": null,
-      "expires_at": null,
-      "duration_ms": null,
-      "summary": "Synthetic status checks have not run yet.",
-      "details": {}
+      "status": "ok",
+      "checked_at": "2026-06-23T01:55:31.269Z",
+      "expires_at": "2026-06-23T02:25:31.269Z",
+      "duration_ms": 331,
+      "summary": "GET /api/auth/me succeeded with account context.",
+      "details": {
+        "account_present": true,
+        "account_count": 1
+      }
     },
     "vault_document_upload": {
-      "status": "down",
-      "checked_at": null,
-      "expires_at": null,
-      "duration_ms": null,
-      "summary": "Synthetic status checks have not run yet.",
-      "details": {}
+      "status": "ok",
+      "checked_at": "2026-06-23T01:55:31.383Z",
+      "expires_at": "2026-06-23T02:25:31.383Z",
+      "duration_ms": 114,
+      "summary": "Duplicate upload returned duplicate_detected=true without dispatching processing.",
+      "details": {
+        "document_id": "1427f571-9890-4589-b313-7c14dda6ee2d",
+        "http_status": 200,
+        "duplicate_detected": true
+      }
     },
     "document_processing": {
       "status": "down",
@@ -35,5 +42,8 @@
       "details": {}
     }
   },
-  "ok_markers": []
+  "ok_markers": [
+    "component:login_authentication:ok",
+    "component:vault_document_upload:ok"
+  ]
 }
