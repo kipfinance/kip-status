@@ -1,0 +1,57 @@
+owner: kipfinance
+repo: kip-status
+user-agent: kip-status
+
+workflowSchedule:
+  uptime: "*/10 * * * *"
+
+sites:
+  - name: Login and authentication
+    url: https://status.kip-ai.com/synthetic-status.json
+    slug: login-authentication
+    maxResponseTime: 5000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "component:login_authentication:ok"
+
+  - name: Vault and document upload
+    url: https://status.kip-ai.com/synthetic-status.json
+    slug: vault-document-upload
+    maxResponseTime: 5000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "component:vault_document_upload:ok"
+
+  - name: Document processing
+    url: https://status.kip-ai.com/synthetic-status.json
+    slug: document-processing
+    maxResponseTime: 5000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "component:document_processing:ok"
+
+  - name: Tax engine and artifacts
+    url: https://status.kip-ai.com/synthetic-status.json
+    slug: tax-engine-artifacts
+    maxResponseTime: 5000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "component:tax_engine_artifacts:ok"
+
+status-website:
+  cname: status.kip-ai.com
+  name: Kip Status
+  logoUrl: https://app.kip-ai.com/favicon.svg
+  introTitle: "Kip system status"
+  introMessage: "Current availability and incident history for Kip customer-facing services. Automated checks cover login and authentication, vault upload, document processing, and tax engine artifact generation."
+  theme: light
+  navbar:
+    - title: Status
+      href: /
+    - title: Kip
+      href: https://app.kip-ai.com
+    - title: Support
+      href: mailto:support@kip-ai.com
+
+i18n:
+  footer: "Kip status is powered by Upptime and GitHub Pages."

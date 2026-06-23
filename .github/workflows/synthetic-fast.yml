@@ -1,0 +1,78 @@
+name: Synthetic status fast checks
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: synthetic-status-json
+  cancel-in-progress: false
+
+jobs:
+  fast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout status repo
+        uses: actions/checkout@v4
+        with:
+          path: kip-status
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Checkout app repo
+        uses: actions/checkout@v4
+        with:
+          repository: kipfinance/kip
+          path: kip
+          token: ${{ secrets.KIP_APP_REPO_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run fast synthetic checks
+        id: synthetic
+        continue-on-error: true
+        run: |
+          mkdir -p kip-status/assets
+          node kip/deploy/status/synthetic/checks.mjs \
+            --mode fast \
+            --status-file kip-status/assets/synthetic-status.json \
+            --no-fail-on-down
+        env:
+          STATUS_API_BASE_URL: ${{ secrets.STATUS_API_BASE_URL }}
+          STATUS_API_KEY: ${{ secrets.STATUS_API_KEY }}
+          STATUS_FAST_TTL_MINUTES: "30"
+
+      - name: Mark fast synthetic workflow failure
+        if: steps.synthetic.outcome == 'failure'
+        run: |
+          node kip/deploy/status/synthetic/checks.mjs \
+            --mode mark-down \
+            --status-file kip-status/assets/synthetic-status.json \
+            --no-fail-on-down
+        env:
+          STATUS_MARK_DOWN_COMPONENTS: "login_authentication,vault_document_upload"
+          STATUS_MARK_DOWN_SUMMARY: "Synthetic fast workflow failed before publishing fresh check results."
+
+      - name: Commit synthetic status JSON
+        run: |
+          cd kip-status
+          git config user.name "kip-status-bot"
+          git config user.email "status-bot@kip-ai.com"
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+          git add assets/synthetic-status.json
+          if git diff --cached --quiet; then
+            echo "No synthetic status changes to commit."
+            exit 0
+          fi
+          git commit -m "Update fast synthetic status"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Fail if synthetic checks crashed
+        if: steps.synthetic.outcome == 'failure'
+        run: exit 1
