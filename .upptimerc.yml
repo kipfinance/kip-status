@@ -54,7 +54,7 @@ status-website:
       href: mailto:support@kip-ai.com
   links:
     - rel: stylesheet
-      href: /kip-status.css
+      href: https://status.kip-ai.com/kip-status.css
   customHeadHtml: |
     <script>document.documentElement.classList.add("kip-status-enhanced");</script>
   customBodyHtml: |
@@ -68,7 +68,7 @@ status-website:
       </div>
     </div>
   customFootHtml: |
-    <script src="/kip-status.js"></script>
+    <script src="https://status.kip-ai.com/kip-status.js"></script>
 
 i18n:
   footer: "Kip status is powered by Upptime and GitHub Pages."
