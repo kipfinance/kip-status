@@ -29,7 +29,7 @@ html.kip-status-enhanced body {
   letter-spacing: 0;
 }
 
-html.kip-status-enhanced #sapper {
+html.kip-status-enhanced #sapper > :not(.kip-status-app) {
   display: none !important;
 }
 
