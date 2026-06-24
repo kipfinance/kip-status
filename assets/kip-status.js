@@ -5,6 +5,11 @@
   const RAW_BASE = `https://raw.githubusercontent.com/${STATUS_REPO}/main`;
   const API_BASE = `https://api.github.com/repos/${STATUS_REPO}`;
   const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "0.0.0.0", ""]);
+  const NAV_LINKS = [
+    { label: "Kip", href: "https://app.kip-ai.com", kind: "link" },
+    { label: "Support", href: "mailto:support@kip-ai.com", kind: "link" },
+    { label: "Incidents", href: "https://github.com/kipfinance/kip-status/issues", kind: "button" },
+  ];
 
   const components = [
     {
@@ -56,26 +61,23 @@
     return `${RAW_BASE}/history/${slug}.yml`;
   }
 
-  async function fetchJson(url, fallback) {
+  async function fetchWithFallback(url, parse, fallback) {
     try {
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) throw new Error(`${url} returned ${response.status}`);
-      return await response.json();
+      return await parse(response);
     } catch (error) {
       console.warn(error);
       return fallback;
     }
   }
 
-  async function fetchText(url, fallback) {
-    try {
-      const response = await fetch(url, { cache: "no-store" });
-      if (!response.ok) throw new Error(`${url} returned ${response.status}`);
-      return await response.text();
-    } catch (error) {
-      console.warn(error);
-      return fallback;
-    }
+  function fetchJson(url, fallback) {
+    return fetchWithFallback(url, (response) => response.json(), fallback);
+  }
+
+  function fetchText(url, fallback) {
+    return fetchWithFallback(url, (response) => response.text(), fallback);
   }
 
   function parseYamlLine(text, key) {
@@ -166,8 +168,8 @@
     return "partial";
   }
 
-  function buildBars(componentModel, days) {
-    const today = startOfUtcDay(new Date());
+  function buildBars(componentModel, days, todayDate = new Date()) {
+    const today = startOfUtcDay(todayDate);
     const firstDay = addDays(today, -(days - 1));
     const startTime = componentModel.startTime ? Date.parse(componentModel.startTime) : null;
     const startDay = Number.isFinite(startTime) ? startOfUtcDay(new Date(startTime)) : null;
@@ -200,6 +202,15 @@
 
   function incidentUrl(issue) {
     return issue?.html_url || "https://github.com/kipfinance/kip-status/issues";
+  }
+
+  function resultForRow(row) {
+    if (row.state === "down") return "Check failed.";
+    if (row.id === "login_authentication") return "Login check passed.";
+    if (row.id === "vault_document_upload") return "Upload check passed.";
+    if (row.id === "document_processing") return "Document processing check passed.";
+    if (row.id === "tax_engine_artifacts") return "Tax artifact check passed.";
+    return "Check passed.";
   }
 
   async function loadModel() {
@@ -311,7 +322,7 @@
     const duration = formatDuration(snapshot.duration_ms);
     const checkedAt = formatDateTime(snapshot.checked_at || row.lastUpdated);
     const expiresAt = snapshot.expires_at ? formatDateTime(snapshot.expires_at) : "No freshness window";
-    const summary = snapshot.summary || row.scope;
+    const summary = resultForRow(row);
     const subtitle = [row.cadence, row.scope].filter(Boolean).join(" · ");
 
     return `
@@ -365,9 +376,9 @@
             <span>Kip Status</span>
           </a>
           <nav class="ks-actions" aria-label="Status navigation">
-            <a class="ks-link" href="https://app.kip-ai.com">Kip</a>
-            <a class="ks-link" href="mailto:support@kip-ai.com">Support</a>
-            <a class="ks-button" href="https://github.com/kipfinance/kip-status/issues">Incidents</a>
+            ${NAV_LINKS.map((link) => `
+              <a class="${link.kind === "button" ? "ks-button" : "ks-link"}" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>
+            `).join("")}
           </nav>
         </div>
       </header>
@@ -411,8 +422,7 @@
         </div>
       </main>
       <footer class="ks-wrap ks-footer">
-        Powered by Kip synthetic checks and Upptime. Current snapshot:
-        <a href="/synthetic-status.json">synthetic-status.json</a>.
+        Powered by Kip synthetic checks and Upptime.
       </footer>
     `;
   }
@@ -446,11 +456,20 @@
           <div class="ks-mark" aria-hidden="true">K</div>
           <div>
             <strong>Status page could not load</strong>
-            <span>Open <a href="/synthetic-status.json">synthetic-status.json</a> or contact support@kip-ai.com.</span>
+            <span>Contact support@kip-ai.com.</span>
           </div>
         </div>
       `;
     }
+  }
+
+  if (typeof window !== "undefined" && window.__KIP_STATUS_TEST__) {
+    window.__kipStatusTestUtils = {
+      barState,
+      buildBars,
+      resultForRow,
+      stateForComponent,
+    };
   }
 
   boot();
