@@ -2,7 +2,7 @@ name: Synthetic status fast checks
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "4,14,24,34,44,54 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -46,7 +46,7 @@ jobs:
         env:
           STATUS_API_BASE_URL: ${{ secrets.STATUS_API_BASE_URL }}
           STATUS_API_KEY: ${{ secrets.STATUS_API_KEY }}
-          STATUS_FAST_TTL_MINUTES: "30"
+          STATUS_FAST_TTL_MINUTES: "60"
 
       - name: Mark fast synthetic workflow failure
         if: steps.synthetic.outcome == 'failure'

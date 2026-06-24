@@ -3,7 +3,7 @@ repo: kip-status
 user-agent: kip-status
 
 workflowSchedule:
-  uptime: "*/10 * * * *"
+  uptime: "3,13,23,33,43,53 * * * *"
 
 sites:
   - name: Login and authentication
