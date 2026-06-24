@@ -3,7 +3,6 @@
 
   const STATUS_REPO = "kipfinance/kip-status";
   const RAW_BASE = `https://raw.githubusercontent.com/${STATUS_REPO}/main`;
-  const API_BASE = `https://api.github.com/repos/${STATUS_REPO}`;
   const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "0.0.0.0", ""]);
   const NAV_LINKS = [
     { label: "Kip", href: "https://app.kip-ai.com", kind: "link" },
@@ -42,9 +41,14 @@
     },
   ];
 
-  const app = document.getElementById("kip-status-app");
   let windowDays = 90;
   let model = null;
+  let bootPromise = null;
+  let renderInProgress = false;
+
+  function getApp() {
+    return document.getElementById("kip-status-app");
+  }
 
   function statusJsonUrl() {
     if (LOCAL_HOSTS.has(window.location.hostname)) {
@@ -200,10 +204,6 @@
     return componentModel.startTime ? `Since ${formatDate(componentModel.startTime)}` : "Monitoring history unavailable";
   }
 
-  function incidentUrl(issue) {
-    return issue?.html_url || "https://github.com/kipfinance/kip-status/issues";
-  }
-
   function resultForRow(row) {
     if (row.state === "down") return "Check failed.";
     if (row.id === "login_authentication") return "Login check passed.";
@@ -214,10 +214,9 @@
   }
 
   async function loadModel() {
-    const [status, summary, issues] = await Promise.all([
+    const [status, summary] = await Promise.all([
       fetchJson(statusJsonUrl(), null),
       fetchJson(summaryUrl(), []),
-      fetchJson(`${API_BASE}/issues?state=open&per_page=10`, []),
     ]);
 
     const historyTexts = await Promise.all(
@@ -240,18 +239,13 @@
       };
     });
 
-    const activeIncident = Array.isArray(issues)
-      ? issues.find((issue) => !issue.pull_request)
-      : null;
     const hasDown = rows.some((row) => row.state === "down");
     const hasWarn = rows.some((row) => row.state === "warn");
 
     return {
       status,
       rows,
-      issues: Array.isArray(issues) ? issues.filter((issue) => !issue.pull_request) : [],
-      activeIncident,
-      overall: activeIncident || hasDown ? "down" : hasWarn ? "warn" : "ok",
+      overall: hasDown ? "down" : hasWarn ? "warn" : "ok",
       loadedAt: now,
     };
   }
@@ -259,26 +253,20 @@
   function renderBanner(data) {
     const downRows = data.rows.filter((row) => row.state === "down");
     const warnRows = data.rows.filter((row) => row.state === "warn");
-    const issue = data.activeIncident;
     const alertClass = data.overall === "down" ? "ks-alert-down" : data.overall === "warn" ? "ks-alert-warn" : "ks-alert-ok";
-    const title = issue
-      ? issue.title
-      : data.overall === "down"
+    const title = data.overall === "down"
         ? "Service disruption"
         : data.overall === "warn"
           ? "Monitoring delayed"
           : "All systems operational";
-    const summary = issue
-      ? `Opened ${formatDateTime(issue.created_at)}.`
-      : data.overall === "down"
+    const summary = data.overall === "down"
         ? `${downRows.map((row) => row.name).join(", ")} unavailable.`
         : data.overall === "warn"
-          ? `${warnRows.map((row) => row.name).join(", ")} checks are stale.`
+          ? `${warnRows.map((row) => row.name).join(", ")} checks are delayed.`
           : "All checks are passing.";
     const timestamp = data.status?.checked_at
       ? `Status snapshot generated ${formatDateTime(data.status.checked_at)}.`
       : `Loaded ${formatDateTime(data.loadedAt.toISOString())}.`;
-    const link = issue ? incidentUrl(issue) : "https://github.com/kipfinance/kip-status/issues";
 
     return `
       <section class="ks-alert ${alertClass}">
@@ -290,7 +278,7 @@
           <p class="ks-alert-summary">${escapeHtml(summary)}</p>
           <div class="ks-alert-time">${escapeHtml(timestamp)}</div>
           <div class="ks-alert-meta">
-            <a class="ks-chip" href="${escapeHtml(link)}">Incident history</a>
+            <a class="ks-chip" href="https://github.com/kipfinance/kip-status/issues">Incident history</a>
             <a class="ks-chip" href="https://github.com/kipfinance/kip-status/tree/main/history">Uptime history</a>
             <span class="ks-chip">10 min checks</span>
             <span class="ks-chip">Daily checks</span>
@@ -428,6 +416,8 @@
   }
 
   function attachEvents() {
+    const app = getApp();
+    if (!app) return;
     app.querySelectorAll("[data-days]").forEach((button) => {
       button.addEventListener("click", () => {
         const nextDays = Number(button.getAttribute("data-days"));
@@ -439,28 +429,55 @@
   }
 
   function render() {
+    const app = getApp();
     if (!model) return;
-    app.innerHTML = renderShell(model);
-    attachEvents();
+    if (!app) return;
+    renderInProgress = true;
+    try {
+      app.innerHTML = renderShell(model);
+      attachEvents();
+    } finally {
+      renderInProgress = false;
+    }
+  }
+
+  function ensureRendered() {
+    if (renderInProgress) return;
+    const app = getApp();
+    if (!app) return;
+    if (model) {
+      if (!app.querySelector(".ks-row")) render();
+      return;
+    }
+    boot();
   }
 
   async function boot() {
+    const app = getApp();
     if (!app) return;
-    try {
-      model = await loadModel();
-      render();
-    } catch (error) {
-      console.error(error);
-      app.innerHTML = `
-        <div class="ks-error">
-          <div class="ks-mark" aria-hidden="true">K</div>
-          <div>
-            <strong>Status page could not load</strong>
-            <span>Contact support@kip-ai.com.</span>
+    if (bootPromise) return bootPromise;
+    bootPromise = (async () => {
+      try {
+        model = await loadModel();
+        render();
+      } catch (error) {
+        console.error(error);
+        const currentApp = getApp();
+        if (!currentApp) return;
+        currentApp.innerHTML = `
+          <div class="ks-error">
+            <div class="ks-mark" aria-hidden="true">K</div>
+            <div>
+              <strong>Status page could not load</strong>
+              <span>Contact support@kip-ai.com.</span>
+            </div>
           </div>
-        </div>
-      `;
-    }
+        `;
+      } finally {
+        bootPromise = null;
+      }
+    })();
+    return bootPromise;
   }
 
   if (typeof window !== "undefined" && window.__KIP_STATUS_TEST__) {
@@ -473,4 +490,35 @@
   }
 
   boot();
+
+  if (typeof window !== "undefined") {
+    if (typeof window.addEventListener === "function") {
+      window.addEventListener("DOMContentLoaded", ensureRendered);
+      window.addEventListener("load", ensureRendered);
+    }
+    if (typeof window.setTimeout === "function") {
+      window.setTimeout(ensureRendered, 500);
+      window.setTimeout(ensureRendered, 1500);
+    }
+  }
+
+  if (typeof MutationObserver !== "undefined") {
+    const observer = new MutationObserver(() => {
+      if (!model || renderInProgress) return;
+      if (typeof window !== "undefined" && typeof window.setTimeout === "function") {
+        window.setTimeout(ensureRendered, 0);
+      } else {
+        ensureRendered();
+      }
+    });
+    const observe = () => {
+      const sapper = document.getElementById("sapper");
+      if (sapper) observer.observe(sapper, { childList: true, subtree: true });
+    };
+    if (document.readyState === "loading" && typeof document.addEventListener === "function") {
+      document.addEventListener("DOMContentLoaded", observe, { once: true });
+    } else {
+      observe();
+    }
+  }
 })();

@@ -4,6 +4,12 @@ const path = require("node:path");
 const vm = require("node:vm");
 
 const source = fs.readFileSync(path.join(__dirname, "../assets/kip-status.js"), "utf8");
+assert.equal(
+  source.includes("api.github.com"),
+  false,
+  "status page should not use the unauthenticated GitHub API",
+);
+
 const sandbox = {
   console,
   document: { getElementById: () => null },
