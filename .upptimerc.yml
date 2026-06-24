@@ -52,6 +52,23 @@ status-website:
       href: https://app.kip-ai.com
     - title: Support
       href: mailto:support@kip-ai.com
+  links:
+    - rel: stylesheet
+      href: https://status.kip-ai.com/kip-status.css
+  customHeadHtml: |
+    <script>document.documentElement.classList.add("kip-status-enhanced");</script>
+  customBodyHtml: |
+    <div id="kip-status-app" class="kip-status-app" aria-live="polite">
+      <div class="ks-loading">
+        <div class="ks-mark" aria-hidden="true">K</div>
+        <div>
+          <strong>Kip status</strong>
+          <span>Loading live checks...</span>
+        </div>
+      </div>
+    </div>
+  customFootHtml: |
+    <script src="https://status.kip-ai.com/kip-status.js"></script>
 
 i18n:
   footer: "Kip status is powered by Upptime and GitHub Pages."

@@ -15,6 +15,10 @@ Upptime checks `https://status.kip-ai.com/synthetic-status.json` for component
 markers and stores uptime history in this repository. Custom synthetic
 workflows update that JSON from production API checks.
 
+The public page uses `assets/kip-status.css` and `assets/kip-status.js` to show
+a simple status-page view with incident banner, uptime bars, check cadence, and
+freshness windows.
+
 ## Operations
 
 - Fast synthetic checks run every 10 minutes.
