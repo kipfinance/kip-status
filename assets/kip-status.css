@@ -1,16 +1,16 @@
 :root {
-  --ks-bg: #f7f6f2;
+  --ks-bg: #f6f8f6;
   --ks-ink: #182421;
-  --ks-muted: #747b76;
-  --ks-line: #dedbd2;
-  --ks-panel: #fffdf8;
-  --ks-panel-strong: #f1eee6;
+  --ks-muted: #68736d;
+  --ks-line: #dce5df;
+  --ks-panel: #ffffff;
+  --ks-panel-strong: #eef3ef;
   --ks-green: #5ea92d;
   --ks-green-dark: #386f1b;
   --ks-yellow: #c2a018;
   --ks-orange: #eb8b2d;
   --ks-red: #db443f;
-  --ks-gray: #c8c4ba;
+  --ks-gray: #c6cec8;
   --ks-focus: #0c6b57;
   color-scheme: light;
 }
@@ -44,7 +44,7 @@ html.kip-status-enhanced #sapper > :not(.kip-status-app) {
 
 .ks-topbar {
   border-bottom: 1px solid var(--ks-line);
-  background: rgba(255, 253, 248, 0.78);
+  background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
@@ -372,7 +372,7 @@ html.kip-status-enhanced #sapper > :not(.kip-status-app) {
 
 .ks-scale-line {
   height: 1px;
-  background: #a7a39b;
+  background: #aab6af;
 }
 
 .ks-details {
@@ -385,7 +385,7 @@ html.kip-status-enhanced #sapper > :not(.kip-status-app) {
 .ks-detail {
   padding: 11px 12px;
   background: var(--ks-bg);
-  border: 1px solid #ebe8df;
+  border: 1px solid #e7eee9;
   border-radius: 7px;
 }
 

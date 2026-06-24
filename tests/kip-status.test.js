@@ -4,19 +4,14 @@ const path = require("node:path");
 const vm = require("node:vm");
 
 const source = fs.readFileSync(path.join(__dirname, "../assets/kip-status.js"), "utf8");
-assert.equal(
-  source.includes("api.github.com"),
-  false,
-  "status page should not use the unauthenticated GitHub API",
-);
-
 const sandbox = {
   console,
   document: { getElementById: () => null },
   Intl,
+  URL,
   window: {
     __KIP_STATUS_TEST__: true,
-    location: { hostname: "localhost" },
+    location: { hostname: "localhost", href: "https://status.kip-ai.com/" },
   },
 };
 
@@ -26,6 +21,7 @@ vm.runInContext(source, sandbox);
 const {
   barState,
   buildBars,
+  isUpptimeIssueRequest,
   resultForRow,
   stateForComponent,
 } = sandbox.window.__kipStatusTestUtils;
@@ -79,5 +75,22 @@ assert.equal(
   "Tax artifact check passed.",
 );
 assert.equal(resultForRow({ id: "login_authentication", state: "down" }), "Check failed.");
+
+assert.equal(
+  isUpptimeIssueRequest("https://api.github.com/repos/kipfinance/kip-status/issues?state=open"),
+  true,
+);
+assert.equal(
+  isUpptimeIssueRequest({ url: "https://api.github.com/repos/kipfinance/kip-status/issues?state=closed" }),
+  true,
+);
+assert.equal(
+  isUpptimeIssueRequest("https://api.github.com/repos/kipfinance/kip-status/actions/runs"),
+  false,
+);
+assert.equal(
+  isUpptimeIssueRequest("https://raw.githubusercontent.com/kipfinance/kip-status/main/history/summary.json"),
+  false,
+);
 
 console.log("kip-status tests passed");

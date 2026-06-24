@@ -42,8 +42,8 @@ status-website:
   cname: status.kip-ai.com
   name: Kip Status
   logoUrl: https://app.kip-ai.com/favicon.svg
-  introTitle: "Kip system status"
-  introMessage: "Current availability and incident history for Kip customer-facing services. Automated checks cover login and authentication, vault upload, document processing, and tax engine artifact generation."
+  introTitle: "Kip Status"
+  introMessage: "Current status and uptime history for Kip services."
   theme: light
   navbar:
     - title: Status
@@ -70,4 +70,4 @@ status-website:
     <script src="https://status.kip-ai.com/kip-status.js"></script>
 
 i18n:
-  footer: "Kip status is powered by Upptime and GitHub Pages."
+  footer: "Powered by Kip synthetic checks and Upptime."
