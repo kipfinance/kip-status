@@ -67,7 +67,6 @@ status-website:
         </div>
       </div>
     </div>
-  customFootHtml: |
     <script src="https://status.kip-ai.com/kip-status.js"></script>
 
 i18n:
