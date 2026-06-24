@@ -4,6 +4,7 @@
   const STATUS_REPO = "kipfinance/kip-status";
   const RAW_BASE = `https://raw.githubusercontent.com/${STATUS_REPO}/main`;
   const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "0.0.0.0", ""]);
+  const GITHUB_API_HOST = "api.github.com";
   const NAV_LINKS = [
     { label: "Kip", href: "https://app.kip-ai.com", kind: "link" },
     { label: "Support", href: "mailto:support@kip-ai.com", kind: "link" },
@@ -45,6 +46,51 @@
   let model = null;
   let bootPromise = null;
   let renderInProgress = false;
+
+  function urlFromResource(resource) {
+    const value = typeof resource === "string" ? resource : resource?.url;
+    if (!value) return null;
+    try {
+      return new URL(value, window.location.href || "https://status.kip-ai.com/");
+    } catch {
+      return null;
+    }
+  }
+
+  function isUpptimeIssueRequest(resource) {
+    const url = urlFromResource(resource);
+    return Boolean(
+      url &&
+        url.hostname === GITHUB_API_HOST &&
+        url.pathname === `/repos/${STATUS_REPO}/issues`
+    );
+  }
+
+  function installUpptimeIssueFetchGuard() {
+    if (
+      typeof window === "undefined" ||
+      typeof window.fetch !== "function" ||
+      typeof Response === "undefined" ||
+      window.fetch.__kipStatusGuarded
+    ) {
+      return;
+    }
+
+    const nativeFetch = window.fetch.bind(window);
+    const guardedFetch = (resource, options) => {
+      if (isUpptimeIssueRequest(resource)) {
+        return Promise.resolve(
+          new Response("[]", {
+            status: 200,
+            headers: { "content-type": "application/json; charset=utf-8" },
+          }),
+        );
+      }
+      return nativeFetch(resource, options);
+    };
+    guardedFetch.__kipStatusGuarded = true;
+    window.fetch = guardedFetch;
+  }
 
   function getApp() {
     return document.getElementById("kip-status-app");
@@ -375,7 +421,7 @@
           <p class="ks-eyebrow">Status</p>
           <h1 class="ks-title">Kip Status</h1>
           <p class="ks-subtitle">
-            Current status and uptime history for Kip customer-facing services.
+            Current status and uptime history for Kip services.
           </p>
         </section>
         <div class="ks-wrap">
@@ -484,11 +530,13 @@
     window.__kipStatusTestUtils = {
       barState,
       buildBars,
+      isUpptimeIssueRequest,
       resultForRow,
       stateForComponent,
     };
   }
 
+  installUpptimeIssueFetchGuard();
   boot();
 
   if (typeof window !== "undefined") {
