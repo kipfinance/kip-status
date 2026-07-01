@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-07-01T10:29:36.006Z",
+  "checked_at": "2026-07-01T12:04:12.818Z",
   "generated_by": "kip-status synthetic checks",
   "components": {
     "login_authentication": {
@@ -27,36 +27,34 @@
     },
     "document_processing": {
       "status": "ok",
-      "checked_at": "2026-06-30T11:44:59.464Z",
-      "expires_at": "2026-07-01T17:44:59.464Z",
-      "duration_ms": 32627,
+      "checked_at": "2026-07-01T12:03:56.674Z",
+      "expires_at": "2026-07-02T18:03:56.674Z",
+      "duration_ms": 39125,
       "summary": "Synthetic document processed successfully.",
       "details": {
-        "document_id": "c14fd30c-e705-4104-bcbc-e15062f7fa00",
+        "document_id": "9dc237e3-179b-44f3-9a13-a2623d668d68",
         "final_status": "processed",
         "fixture": "status_paystub_seed_2026-04-15.pdf"
       }
     },
     "tax_engine_artifacts": {
       "status": "ok",
-      "checked_at": "2026-06-30T11:45:05.861Z",
-      "expires_at": "2026-07-01T17:45:05.861Z",
-      "duration_ms": 5878,
+      "checked_at": "2026-07-01T12:04:12.817Z",
+      "expires_at": "2026-07-02T18:04:12.817Z",
+      "duration_ms": 15638,
       "summary": "estimated_tax_quarterly:2026 recomputed and has committed artifact data.",
       "details": {
         "artifact_key": "estimated_tax_quarterly:2026",
         "dispatch": "started",
-        "previous_version": 8,
-        "version": 9,
+        "previous_version": 10,
+        "version": 11,
         "activity_status": "succeeded",
-        "activity_started_at": "2026-06-30T11:45:00.723057+00:00"
+        "activity_started_at": "2026-07-01T12:03:58.138201+00:00"
       }
     }
   },
   "ok_markers": [
     "component:document_processing:ok",
-    "component:login_authentication:ok",
-    "component:tax_engine_artifacts:ok",
-    "component:vault_document_upload:ok"
+    "component:tax_engine_artifacts:ok"
   ]
 }
