@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-07-11T09:50:39.908Z",
+  "checked_at": "2026-07-11T10:14:03.695Z",
   "generated_by": "kip-status synthetic checks",
   "components": {
     "login_authentication": {
@@ -27,21 +27,21 @@
     },
     "document_processing": {
       "status": "ok",
-      "checked_at": "2026-07-10T11:50:45.719Z",
-      "expires_at": "2026-07-11T17:50:45.719Z",
-      "duration_ms": 38093,
+      "checked_at": "2026-07-11T10:13:56.241Z",
+      "expires_at": "2026-07-12T16:13:56.241Z",
+      "duration_ms": 42982,
       "summary": "Synthetic document processed successfully.",
       "details": {
-        "document_id": "41468660-342e-4df4-9180-15ad9ebf46e4",
+        "document_id": "ccf70040-2d3c-47e6-b783-16542e6507ca",
         "final_status": "processed",
         "fixture": "status_paystub_seed_2026-04-15.pdf"
       }
     },
     "tax_engine_artifacts": {
       "status": "down",
-      "checked_at": "2026-07-10T11:50:52.581Z",
-      "expires_at": "2026-07-10T11:50:52.581Z",
-      "duration_ms": 5940,
+      "checked_at": "2026-07-11T10:14:03.693Z",
+      "expires_at": "2026-07-11T10:14:03.693Z",
+      "duration_ms": 5987,
       "summary": "Artifact run failed: California Form 540 tax table is not implemented for taxable income <= $100,000",
       "details": {
         "artifact_key": "estimated_tax_quarterly:2026"
