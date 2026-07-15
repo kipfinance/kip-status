@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-07-15T21:41:51.008Z",
+  "checked_at": "2026-07-15T22:38:27.174Z",
   "generated_by": "kip-status synthetic checks",
   "components": {
     "login_authentication": {
       "status": "ok",
-      "checked_at": "2026-07-15T21:41:50.819Z",
-      "expires_at": "2026-07-15T22:41:50.819Z",
-      "duration_ms": 393,
+      "checked_at": "2026-07-15T22:38:26.939Z",
+      "expires_at": "2026-07-15T23:38:26.939Z",
+      "duration_ms": 289,
       "summary": "GET /api/auth/me succeeded with account context.",
       "details": {
         "account_present": true,
@@ -15,9 +15,9 @@
     },
     "vault_document_upload": {
       "status": "ok",
-      "checked_at": "2026-07-15T21:41:51.007Z",
-      "expires_at": "2026-07-15T22:41:51.007Z",
-      "duration_ms": 188,
+      "checked_at": "2026-07-15T22:38:27.173Z",
+      "expires_at": "2026-07-15T23:38:27.173Z",
+      "duration_ms": 234,
       "summary": "Duplicate upload returned duplicate_detected=true without dispatching processing.",
       "details": {
         "document_id": "1427f571-9890-4589-b313-7c14dda6ee2d",
