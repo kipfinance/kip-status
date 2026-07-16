@@ -1,7 +1,7 @@
 url: https://status.kip-ai.com/synthetic-status.json
-status: up
+status: down
 code: 200
-responseTime: 184
-lastUpdated: 2026-07-15T23:56:39.354Z
+responseTime: 115
+lastUpdated: 2026-07-16T11:19:09.578Z
 startTime: 2026-06-23T02:40:09.777Z
 generator: Upptime <https://github.com/upptime/upptime>
