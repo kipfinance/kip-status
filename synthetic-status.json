@@ -1,12 +1,16 @@
 {
+<<<<<<< Updated upstream
   "checked_at": "2026-07-16T10:58:08.710Z",
+=======
+  "checked_at": "2026-07-16T10:58:24.795Z",
+>>>>>>> Stashed changes
   "generated_by": "kip-status synthetic checks",
   "components": {
     "login_authentication": {
       "status": "ok",
-      "checked_at": "2026-07-16T08:58:37.963Z",
-      "expires_at": "2026-07-16T09:58:37.963Z",
-      "duration_ms": 318,
+      "checked_at": "2026-07-16T10:58:24.674Z",
+      "expires_at": "2026-07-16T11:58:24.674Z",
+      "duration_ms": 193,
       "summary": "GET /api/auth/me succeeded with account context.",
       "details": {
         "account_present": true,
@@ -15,9 +19,9 @@
     },
     "vault_document_upload": {
       "status": "ok",
-      "checked_at": "2026-07-16T08:58:38.245Z",
-      "expires_at": "2026-07-16T09:58:38.245Z",
-      "duration_ms": 282,
+      "checked_at": "2026-07-16T10:58:24.794Z",
+      "expires_at": "2026-07-16T11:58:24.794Z",
+      "duration_ms": 120,
       "summary": "Duplicate upload returned duplicate_detected=true without dispatching processing.",
       "details": {
         "document_id": "1427f571-9890-4589-b313-7c14dda6ee2d",
